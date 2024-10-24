@@ -2508,17 +2508,12 @@ msgstr "memoria esaurita"
 #: config.c:125
 #, c-format
 msgid ""
-"exceeded maximum include depth (%d) while including\n"
+"found a circular include while including\n"
 "\t%s\n"
 "from\n"
 "\t%s\n"
-"This might be due to circular includes."
+"."
 msgstr ""
-"profondità massima di inclusione (%d) superata durante l'inclusione di\n"
-"\t%s\n"
-"da\n"
-"\t%s\n"
-"Ciò può essere dovuto a delle inclusioni circolari."
 
 #: config.c:141
 #, c-format

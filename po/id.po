@@ -19019,17 +19019,12 @@ msgstr "tidak dapat mengembalikan setelan terminal"
 #: config.c
 #, c-format
 msgid ""
-"exceeded maximum include depth (%d) while including\n"
+"found a circular include while including\n"
 "\t%s\n"
 "from\n"
 "\t%s\n"
-"This might be due to circular includes."
+"."
 msgstr ""
-"melebihi kedalaman include maksimum (%d) ketika memasukkan\n"
-"\t%s\n"
-"dari\n"
-"\t%s\n"
-"Ini mungkin disebabkan oleh include sirkular."
 
 #: config.c
 #, c-format

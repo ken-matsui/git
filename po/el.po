@@ -1578,11 +1578,11 @@ msgstr ""
 #: config.c:123
 #, c-format
 msgid ""
-"exceeded maximum include depth (%d) while including\n"
+"found a circular include while including\n"
 "\t%s\n"
 "from\n"
 "\t%s\n"
-"This might be due to circular includes."
+"."
 msgstr ""
 
 #: config.c:139

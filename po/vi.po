@@ -15174,17 +15174,12 @@ msgstr "không thể phục hồi lại các cài đặt thiết bị cuối"
 
 #, c-format
 msgid ""
-"exceeded maximum include depth (%d) while including\n"
+"found a circular include while including\n"
 "\t%s\n"
 "from\n"
 "\t%s\n"
-"This might be due to circular includes."
+"."
 msgstr ""
-"vượt quá độ sâu bao gồm tối đa (%d) trong khi bao gồm\n"
-"\t%s\n"
-"từ\n"
-"\t%s\n"
-"Nguyên nhân có thể là gồm quẩn vòng."
 
 #, c-format
 msgid "could not expand include path '%s'"

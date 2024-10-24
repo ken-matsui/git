@@ -18779,17 +18779,12 @@ msgstr "无法恢复终端设置"
 #: config.c
 #, c-format
 msgid ""
-"exceeded maximum include depth (%d) while including\n"
+"found a circular include while including\n"
 "\t%s\n"
 "from\n"
 "\t%s\n"
-"This might be due to circular includes."
+"."
 msgstr ""
-"超过了最大包含深度（%1$d），当从\n"
-"\t%3$s\n"
-"包含\n"
-"\t%2$s\n"
-"这可能是因为循环包含。"
 
 #: config.c
 #, c-format

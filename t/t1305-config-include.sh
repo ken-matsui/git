@@ -354,7 +354,62 @@ test_expect_success 'include cycles are detected' '
 	git -C cycle config include.path cycle &&
 	git config -f cycle/cycle include.path config &&
 	test_must_fail git -C cycle config --get-all test.value 2>stderr &&
-	grep "exceeded maximum include depth" stderr
+	grep "found a circular include" stderr
+'
+
+test_expect_success 'including self should be detected as cycle' '
+	test_when_finished "rm -rf repo" &&
+	git init repo &&
+	(
+		cd repo &&
+		git config set includeIf.onbranch:"*".path config &&
+		test_must_fail git config --get-all test.value 2>stderr &&
+		grep "found a circular include" stderr
+	)
+'
+
+test_expect_success 'including symlink that has a cycle should be detected as cycle' '
+	test_when_finished "rm -rf repo" &&
+	git init repo &&
+	(
+		cd repo &&
+		git config set includeIf.onbranch:"*".path config.inc &&
+		ln -s config .git/config.inc &&
+		test_must_fail git config --get-all test.value 2>stderr &&
+		grep "found a circular include" stderr
+	)
+'
+
+test_expect_success 'including relative path that has a cycle should be detected as cycle' '
+	test_when_finished "rm -rf repo" &&
+	git init repo &&
+	(
+		cd repo &&
+		git config set includeIf.onbranch:"*".path ../.git/config &&
+		test_must_fail git config --get-all test.value 2>stderr &&
+		grep "found a circular include" stderr
+	)
+'
+
+test_expect_success 'include depth of >10 should not be detected' '
+	test_when_finished "rm -rf repo" &&
+	git init repo &&
+	(
+		cd repo &&
+		git config set includeIf.onbranch:"*".path depth1.inc &&
+		git config set -f .git/depth1.inc includeIf.onbranch:"*".path depth2.inc &&
+		git config set -f .git/depth2.inc includeIf.onbranch:"*".path depth3.inc &&
+		git config set -f .git/depth3.inc includeIf.onbranch:"*".path depth4.inc &&
+		git config set -f .git/depth4.inc includeIf.onbranch:"*".path depth5.inc &&
+		git config set -f .git/depth5.inc includeIf.onbranch:"*".path depth6.inc &&
+		git config set -f .git/depth6.inc includeIf.onbranch:"*".path depth7.inc &&
+		git config set -f .git/depth7.inc includeIf.onbranch:"*".path depth8.inc &&
+		git config set -f .git/depth8.inc includeIf.onbranch:"*".path depth9.inc &&
+		git config set -f .git/depth9.inc includeIf.onbranch:"*".path depth10.inc &&
+		git config set -f .git/depth10.inc includeIf.onbranch:"*".path depth11.inc &&
+		git config set -f .git/depth11.inc foo.bar baz &&
+		git config get foo.bar
+	)
 '
 
 test_expect_success 'onbranch with unborn branch' '

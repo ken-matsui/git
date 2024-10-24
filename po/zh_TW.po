@@ -18657,17 +18657,12 @@ msgstr "無法復原終端機設定"
 #: config.c
 #, c-format
 msgid ""
-"exceeded maximum include depth (%d) while including\n"
+"found a circular include while including\n"
 "\t%s\n"
 "from\n"
 "\t%s\n"
-"This might be due to circular includes."
+"."
 msgstr ""
-"超過了最大包含深度（%1$d），當從\n"
-"\t%3$s\n"
-"包含\n"
-"\t%2$s\n"
-"這可能是因為循環包含。"
 
 #: config.c
 #, c-format

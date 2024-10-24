@@ -123,6 +123,52 @@ static long config_buf_ftell(struct config_source *conf)
 	return conf->u.buf.pos;
 }
 
+struct visited_path_entry {
+	struct hashmap_entry ent;
+	dev_t dev;
+	ino_t ino;
+};
+
+static unsigned int visited_path_hash(dev_t dev, ino_t ino)
+{
+	unsigned int hash;
+
+	hash = (unsigned int)dev + (unsigned int)ino;
+	hash += (hash >> 8) + (hash >> 16);
+	return hash;
+}
+
+static struct visited_path_entry *visited_path_find_entry(struct hashmap *visited_paths,
+							  dev_t dev, ino_t ino)
+{
+	struct visited_path_entry k;
+	struct visited_path_entry *found_entry;
+
+	hashmap_entry_init(&k.ent, visited_path_hash(dev, ino));
+	k.dev = dev;
+	k.ino = ino;
+	found_entry = hashmap_get_entry(visited_paths, &k, ent, NULL);
+	return found_entry;
+}
+
+static int visited_path_entry_cmp(const void *cmp_data UNUSED,
+				  const struct hashmap_entry *eptr,
+				  const struct hashmap_entry *entry_or_key,
+				  const void *keydata UNUSED)
+{
+	const struct visited_path_entry *e1, *e2;
+
+	e1 = container_of(eptr, const struct visited_path_entry, ent);
+	e2 = container_of(entry_or_key, const struct visited_path_entry, ent);
+
+	if (e1->dev == e2->dev && e1->ino == e2->ino)
+		return 0;
+	else if (e1->dev == e2->dev)
+		return e1->ino > e2->ino ? 1 : -1;
+	else
+		return e1->dev > e2->dev ? 1 : -1;
+}
+
 struct remote_urls_entry {
 	struct hashmap_entry ent;
 	char *name;
@@ -155,12 +201,14 @@ static int remote_urls_entry_cmp(const void *cmp_data UNUSED,
 }
 
 struct config_include_data {
-	int depth;
 	config_fn_t fn;
 	void *data;
 	const struct config_options *opts;
 	const struct git_config_source *config_source;
 	struct repository *repo;
+
+	struct hashmap visited_paths;
+	int visited_paths_initialized;
 
 	/*
 	 * All remote names & URLs discovered when reading all config files.
@@ -173,13 +221,12 @@ struct config_include_data {
 static int git_config_include(const char *var, const char *value,
 			      const struct config_context *ctx, void *data);
 
-#define MAX_INCLUDE_DEPTH 10
-static const char include_depth_advice[] = N_(
-"exceeded maximum include depth (%d) while including\n"
+static const char include_cycle_advice[] = N_(
+"found a circular include while including\n"
 "	%s\n"
 "from\n"
 "	%s\n"
-"This might be due to circular includes.");
+".");
 static int handle_path_include(const struct key_value_info *kvi,
 			       const char *path,
 			       struct config_include_data *inc)
@@ -216,14 +263,41 @@ static int handle_path_include(const struct key_value_info *kvi,
 	}
 
 	if (!access_or_die(path, R_OK, 0)) {
-		if (++inc->depth > MAX_INCLUDE_DEPTH)
-			die(_(include_depth_advice), MAX_INCLUDE_DEPTH, path,
+		struct stat path_stat;
+		dev_t dev;
+		ino_t ino;
+		struct visited_path_entry *e;
+		/* struct visited_path_entry *removed; */
+
+		if (stat(path, &path_stat))
+			die_errno("Failed to stat '%s'", path);
+		dev = path_stat.st_dev;
+		ino = path_stat.st_ino;
+
+		if (!inc->visited_paths_initialized) {
+			hashmap_init(&inc->visited_paths, visited_path_entry_cmp,
+				     NULL, 0);
+			inc->visited_paths_initialized = 1;
+		}
+
+		if (visited_path_find_entry(&inc->visited_paths, dev, ino))
+			die(_(include_cycle_advice), path,
 			    !kvi ? "<unknown>" :
 			    kvi->filename ? kvi->filename :
 			    "the command line");
+
+		e = xmalloc(sizeof(*e));
+		hashmap_entry_init(&e->ent, visited_path_hash(dev, ino));
+		e->dev = dev;
+		e->ino = ino;
+		hashmap_add(&inc->visited_paths, &e->ent);
+
 		ret = git_config_from_file_with_options(git_config_include, path, inc,
 							kvi->scope, NULL);
-		inc->depth--;
+
+		hashmap_remove(&inc->visited_paths, &e->ent, e);
+		free(e);
+		/* free(removed); */
 	}
 cleanup:
 	strbuf_release(&buf);
@@ -2250,6 +2324,11 @@ int config_with_options(config_fn_t fn, void *data,
 					       data, config_source->scope);
 	} else {
 		ret = do_git_config_sequence(opts, repo, fn, data);
+	}
+
+	if (inc.visited_paths_initialized) {
+		hashmap_clear_and_free(&inc.visited_paths, struct visited_path_entry, ent);
+		inc.remote_urls_initialized = 0;
 	}
 
 	if (inc.remote_urls_initialized) {

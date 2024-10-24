@@ -15536,17 +15536,12 @@ msgstr "impossible de restaurer les réglages du terminal"
 
 #, c-format
 msgid ""
-"exceeded maximum include depth (%d) while including\n"
+"found a circular include while including\n"
 "\t%s\n"
 "from\n"
 "\t%s\n"
-"This might be due to circular includes."
+"."
 msgstr ""
-"profondeur d'inclusion maximum (%d) dépassée à l'inclusion de\n"
-"\t%s\n"
-"depuis\n"
-"\t%s\n"
-"possibilité d'inclusions multiples."
 
 #, c-format
 msgid "could not expand include path '%s'"

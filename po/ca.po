@@ -19353,17 +19353,12 @@ msgstr "no es poden restaurar els paràmetres del terminal"
 #: config.c
 #, c-format
 msgid ""
-"exceeded maximum include depth (%d) while including\n"
+"found a circular include while including\n"
 "\t%s\n"
 "from\n"
 "\t%s\n"
-"This might be due to circular includes."
+"."
 msgstr ""
-"s'ha superat la profunditat màxima d'inclusió (%d) mentre s'incloïen\n"
-"\t%s\n"
-"des de\n"
-"\t%s\n"
-"Això pot ser degut a inclusions circulars."
 
 #: config.c
 #, c-format

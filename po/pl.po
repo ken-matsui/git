@@ -2541,17 +2541,12 @@ msgstr "pamięć wyczerpana"
 #: config.c:125
 #, c-format
 msgid ""
-"exceeded maximum include depth (%d) while including\n"
+"found a circular include while including\n"
 "\t%s\n"
 "from\n"
 "\t%s\n"
-"This might be due to circular includes."
+"."
 msgstr ""
-"przekroczono maksymalną głębokość załączania (%d) podczas załączania\n"
-"\t%s\n"
-"z\n"
-"\t%s\n"
-"Może to być spowodowane cyklicznymi załączeniami."
 
 #: config.c:141
 #, c-format

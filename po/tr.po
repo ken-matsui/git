@@ -15150,17 +15150,12 @@ msgstr "uçbirim ayarları geri yüklenemiyor"
 
 #, c-format
 msgid ""
-"exceeded maximum include depth (%d) while including\n"
+"found a circular include while including\n"
 "\t%s\n"
 "from\n"
 "\t%s\n"
-"This might be due to circular includes."
+"."
 msgstr ""
-"aşağıdaki içerilirken olabilecek en çok içerme derinliği (%d) aşıldı:\n"
-"\t%s\n"
-"içerme konumu:\n"
-"\t%s\n"
-"Bu dairesel içermelerden dolayı olabilir."
 
 #, c-format
 msgid "could not expand include path '%s'"

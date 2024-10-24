@@ -15568,18 +15568,12 @@ msgstr "kann Terminaleinstellungen nicht wiederherstellen"
 
 #, c-format
 msgid ""
-"exceeded maximum include depth (%d) while including\n"
+"found a circular include while including\n"
 "\t%s\n"
 "from\n"
 "\t%s\n"
-"This might be due to circular includes."
+"."
 msgstr ""
-"Maximale Include-Tiefe (%d) beim Einbinden von\n"
-"\t%s\n"
-"von\n"
-"\t%s\n"
-"überschritten.\n"
-"Das könnte durch zirkulare Includes entstanden sein."
 
 #, c-format
 msgid "could not expand include path '%s'"

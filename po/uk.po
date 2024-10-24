@@ -15249,17 +15249,12 @@ msgstr "не вдалося відновити налаштування терм
 
 #, c-format
 msgid ""
-"exceeded maximum include depth (%d) while including\n"
+"found a circular include while including\n"
 "\t%s\n"
 "from\n"
 "\t%s\n"
-"This might be due to circular includes."
+"."
 msgstr ""
-"перевищено максимальну глибину (%d) під час включення\n"
-"\t%s\n"
-"від\n"
-"\t%s\n"
-"Це може бути повʼязано з циклічним включенням."
 
 #, c-format
 msgid "could not expand include path '%s'"
